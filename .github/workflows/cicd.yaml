@@ -27,16 +27,33 @@ jobs:
         with:
           push: true
           tags: grantpreyser4/python-app:${{ env.COMMIT_ID }}
+    outputs:
+      commit_id: ${{ env.COMMIT_ID }}
+
   cd:
     needs: ci
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v3
+
+      - name: Modify values file
+        shell: bash
+        run: |
+          echo ${{needs.ci.outputs.commit_id}}
+          yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/python-app/values.yaml
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v10
+        with:
+          message: "Update values.yaml image tag with commit ${{needs.ci.outputs.commit_id}}"
+
       - name: Install argo
         shell: bash
         run: |
           curl -k -sSL -o argocd https://argocd-server.argocd/download/argocd-linux-amd64
           chmod +x argocd
           sudo mv argocd /usr/local/bin/argocd
+
       - name: argocd app sync
         shell: bash
         run: |
