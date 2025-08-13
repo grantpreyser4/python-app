@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: grantpreyser4/python-app
   pullPolicy: IfNotPresent
-  tag: "15513d"
+  tag: "7c97a7"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
